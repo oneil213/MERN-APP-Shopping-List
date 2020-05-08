@@ -1,14 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   Collapse,
   Navbar,
   NavbarToggler,
   NavbarBrand,
   Nav,
-  NavLink,
   NavItem,
   Container
 } from 'reactstrap';
+
+import RegisterModal from '../components/Auth/RegisterModal';
+import Logout from '../components/Auth/Logout';
+import LoginModal from './Auth/LoginModal';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+
 
 
 
@@ -18,6 +24,13 @@ class AppNavbar extends Component {
         isOpen: false
     }
 
+    static propTypes = {
+        auth: PropTypes.object.isRequired
+    }
+
+
+
+
     toggle = ()=> {
         this.setState({
             isOpen: !this.state.isOpen
@@ -26,6 +39,33 @@ class AppNavbar extends Component {
     }
 
     render(){
+
+        const { isAuthenticated, shopper } = this.props.auth;
+        const authLinks = (
+            <Fragment>
+                <NavItem >
+                    <span className='navbar-text mr-3'>
+                      <strong >{ shopper? `Welcome ${shopper.name}` : ''}</strong>
+                    </span>
+                </NavItem>
+                <NavItem>
+                  <Logout />
+                </NavItem>
+
+            </Fragment>
+        );
+        const guestLinks = (
+            <Fragment>
+                 <NavItem>
+                   <RegisterModal />
+                 </NavItem>
+                        
+                 <NavItem>
+                  <LoginModal />
+                 </NavItem>
+                
+            </Fragment>
+        )
         return(
             <div>
             <Navbar color="dark" dark expand="sm" className="mb-5">
@@ -34,11 +74,7 @@ class AppNavbar extends Component {
                     <NavbarToggler onClick={this.toggle} />
                     <Collapse isOpen={this.state.isOpen} navbar>
                     <Nav className="ml-auto" navbar>
-                        <NavItem>
-                           <NavLink href="https:github.com/oneil213">
-                               Github
-                           </NavLink>
-                        </NavItem>
+                       {isAuthenticated ? authLinks : guestLinks}
                     </Nav>
                     </Collapse>    
                 </Container>
@@ -54,5 +90,8 @@ class AppNavbar extends Component {
 
 }
 
+const mapStateToProps = (state) => ({
+     auth: state.auth
+})
 
-export default AppNavbar;
+export default connect(mapStateToProps, null)(AppNavbar);

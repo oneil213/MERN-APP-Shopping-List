@@ -7,8 +7,17 @@ import store from './store';
 import ItemModal from '../src/components/ItemModal'
 import { Container } from 'reactstrap';
 import './App.css';
+import { loadShopper} from './actions/authActions';
+
+
 
 class App extends Component {
+
+  componentDidMount() {
+    store.dispatch(loadShopper());
+  }
+
+
   render() {
     return (
       <Provider store={store}>
